@@ -1,6 +1,6 @@
 export const dev = window.location.origin.includes('localhost')
-export const baseURL = 'https://sandbox.codeworksacademy.com'
+export const baseURL = 'https://localhost:7045'
 export const useSockets = false
-export const domain = 'codeworksclassroom.auth0.com'
-export const clientId = 'pOXw2OGv1LsYi7LEBmDF04RLkXQvldml'
-export const audience = 'https://codeworksclassroom.com'
+export const domain = 'dev-g30bpmzj1ey6jicw.us.auth0.com'
+export const clientId = 'XQbHm8ncEM1merDFzYditqxySChOXaD7'
+export const audience = 'https://auth.test.com'

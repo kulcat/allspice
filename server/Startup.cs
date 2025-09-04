@@ -35,16 +35,16 @@ public class Startup
     services.AddScoped<IDbConnection>(x => CreateDbConnection());
 
     services.AddScoped<AccountsRepository>();
-    services.AddScoped<AccountService>();
+    services.AddScoped<AccountsService>();
 
     services.AddScoped<FavoritesRepository>();
-    services.AddScoped<FavoriteService>();
+    services.AddScoped<FavoritesService>();
 
     services.AddScoped<RecipesRepository>();
-    services.AddScoped<RecipeService>();
+    services.AddScoped<RecipesService>();
 
     services.AddScoped<IngredientsRepository>();
-    services.AddScoped<IngredientService>();
+    services.AddScoped<IngredientsService>();
   }
 
   private void ConfigureCors(IServiceCollection services)

@@ -14,8 +14,9 @@ public class RecipesRepository : IRepository<Recipe>
   {
     string sql = @"
     INSERT INTO 
-    Recipe(title, instructions, img, category, creator_Id)
-    VALUES(@Title, @Instructions, @Img, @Category, @Creator_id))";
+    Recipes(title, instructions, img, category, creator_Id)
+    VALUES(@Title, @Instructions, @Img, @Category, @Creator_id);
+    SELECT LAST_INSERT_ID();";
 
     int id = _db.ExecuteScalar<int>(sql, data);
     data.Id = id;
@@ -24,27 +25,27 @@ public class RecipesRepository : IRepository<Recipe>
 
   public bool Delete(int id)
   {
-    string sql = @"DELETE FROM Recipe WHERE id = @id LIMIT 1";
+    string sql = @"DELETE FROM Recipes WHERE id = @id LIMIT 1";
     int rowsAffected = _db.Execute(sql, new { id });
     return rowsAffected > 0;
   }
 
   public List<Recipe> GetAll()
   {
-    string sql = @"SELECT * FROM Recipe";
+    string sql = @"SELECT * FROM Recipes";
     return _db.Query<Recipe>(sql).ToList();
   }
 
   public Recipe GetById(int id)
   {
-    string sql = @"SELECT * FROM Recipe WHERE id = @id";
+    string sql = @"SELECT * FROM Recipes WHERE id = @id";
     return _db.QueryFirstOrDefault<Recipe>(sql, new { id });
   }
 
   public Recipe Update(Recipe updateData)
   {
     string sql = @"
-      UPDATE Recipe
+      UPDATE Recipes
       SET 
         title = @Title,
         instructions = @Instructions,
@@ -52,7 +53,7 @@ public class RecipesRepository : IRepository<Recipe>
         category = @Category,
         creator_id = @Creator_id
       WHERE id = @Id;
-      SELECT * FROM Recipe WHERE id = @Id;
+      SELECT * FROM Recipes WHERE id = @Id;
     ";
 
     return _db.QueryFirstOrDefault<Recipe>(sql, updateData);

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace allspice.Models;
 
 public class Account

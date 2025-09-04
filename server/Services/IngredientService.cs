@@ -1,7 +1,7 @@
-public class IngredientService
+public class IngredientsService
 {
   private readonly IngredientsRepository _repo;
-  public IngredientService(IngredientsRepository repo)
+  public IngredientsService(IngredientsRepository repo)
   {
     _repo = repo;
   }

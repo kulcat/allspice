@@ -2,18 +2,20 @@ namespace allspice.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RecipeController : ControllerBase
+[Authorize]
+public class RecipesController : ControllerBase
 {
-  private readonly RecipeService _service;
+  private readonly RecipesService _service;
   private readonly Auth0Provider _auth0Provider;
 
 
-  public RecipeController(RecipeService service, Auth0Provider auth0Provider)
+  public RecipesController(RecipesService service, Auth0Provider auth0Provider)
   {
     _service = service;
     _auth0Provider = auth0Provider;
   }
 
+  [AllowAnonymous]
   [HttpGet]
   public ActionResult<IEnumerable<Recipe>> GetRecipes()
   {
@@ -28,6 +30,7 @@ public class RecipeController : ControllerBase
     }
   }
 
+  [AllowAnonymous]
   [HttpGet("{id}")]
   public ActionResult<Recipe> GetRecipeById(int id)
   {
@@ -43,11 +46,13 @@ public class RecipeController : ControllerBase
   }
 
   [HttpPost]
-  public ActionResult<Recipe> CreateRecipe([FromBody] Recipe Recipe)
+  public async Task<ActionResult<Recipe>> CreateRecipe([FromBody] Recipe recipe)
   {
     try
     {
-      var newRecipe = _service.CreateRecipe(Recipe);
+      Account creator = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      recipe.Creator_id = creator.Id;
+      var newRecipe = _service.CreateRecipe(recipe);
       return Ok(newRecipe);
     }
     catch (Exception e)

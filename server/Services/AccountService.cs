@@ -1,10 +1,10 @@
 namespace allspice.Services;
 
-public class AccountService
+public class AccountsService
 {
   private readonly AccountsRepository _repo;
 
-  public AccountService(AccountsRepository repo)
+  public AccountsService(AccountsRepository repo)
   {
     _repo = repo;
   }
