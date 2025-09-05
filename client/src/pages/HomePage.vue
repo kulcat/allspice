@@ -31,25 +31,30 @@ async function getRecipes() {
 </script>
 
 <template>
-  <main class="container-fluid">
+  <main class="container position-relative">
 
-    <div class="d-flex justify-content-center align-items-center row" v-if="!(AppState.account && AppState.recipes)">
+    <div >
+
+    </div>
+    <div>
+
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center w-100 h-100"
+      v-if="!(AppState.account && AppState.recipes)">
       <i class="mdi mdi-loading"></i>
     </div>
 
-    <div v-else class="row">
-      <div>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRecipeModal">
-          Create
-        </button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#recipeDetailsModal">
-          View
-        </button>
-      </div>
-      <div>
+    <div v-else class="">
+      <div class="d-flex flex-column">
         <RecipeCompact v-for="recipe in AppState.recipes" :key="recipe.id" :recipe="recipe" />
       </div>
     </div>
+
+    <button id="createButton" type="button" class="btn rounded-circle position-absolute text-white fs-1"
+      data-bs-toggle="modal" data-bs-target="#createRecipeModal" style="background-color: #587464;">
+      <i class="mdi mdi-plus"></i>
+    </button>
 
     <div>
       <CreateRecipeModal />
@@ -58,4 +63,11 @@ async function getRecipes() {
   </main>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+#createButton {
+  width: 5rem;
+  height: 5rem;
+  top: 80%;
+  left: 90%;
+}
+</style>

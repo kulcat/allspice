@@ -14,6 +14,7 @@ public class FavoriteController : ControllerBase
     _auth0Provider = auth0Provider;
   }
 
+  [AllowAnonymous]
   [HttpGet]
   public ActionResult<IEnumerable<Favorite>> GetFavorites()
   {
