@@ -9,6 +9,8 @@ class RecipeService {
       const response = await api.get('api/Recipes');
       console.log(response);
 
+      AppState.recipes.length = 0;
+
       response.data.forEach(data => {
         AppState.recipes.push(new Recipe(data));
       });

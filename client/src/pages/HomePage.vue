@@ -1,12 +1,12 @@
 <script setup>
 import { AppState } from '@/AppState';
 import CreateRecipeModal from '@/components/CreateRecipeModal.vue';
-import Example from '@/components/Example.vue';
+import Login from '@/components/Login.vue';
 import RecipeCompact from '@/components/RecipeCompact.vue';
-import RecipeDetailsModal from '@/components/RecipeDetailsModal.vue';
+import ViewRecipeModal from '@/components/ViewRecipeModal.vue';
 import { recipeService } from '@/services/RecipeService';
 import { Pop } from '@/utils/Pop';
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 watch(
   () => AppState.recipes,
@@ -17,6 +17,8 @@ watch(
 );
 
 const recipes = computed(() => AppState.recipes);
+
+const search = ref("");
 
 async function getRecipes() {
   try {
@@ -31,34 +33,61 @@ async function getRecipes() {
 </script>
 
 <template>
-  <main class="container position-relative">
+  <main class="container position-relative p-3 d-flex flex-column align-items-center">
 
-    <div >
+    <div class="d-flex flex-column justify-content-center w-100 position-relative" style="height: 25dvh;">
 
-    </div>
-    <div>
+      <div class="position-absolute top-0 start-0 w-100 h-100 rounded-2 shadow z-n1"
+        style="background: url('https://sestra.nl/wp-content/uploads/2019/06/Het-wachten-waard-1024x683.jpg') center/cover no-repeat">
+      </div>
 
-    </div>
+      <div class="d-flex justify-content-end w-100 gap-3 px-3 py-1">
+        <div class="d-flex gap-3">
+          <input type="text" v-model="search" placeholder="Search">
+          <button class="btn"><i class="mdi mdi-magnify"></i></button>
+        </div>
+        <Login />
+      </div>
 
-    <div class="d-flex justify-content-center align-items-center w-100 h-100"
-      v-if="!(AppState.account && AppState.recipes)">
-      <i class="mdi mdi-loading"></i>
-    </div>
-
-    <div v-else class="">
-      <div class="d-flex flex-column">
-        <RecipeCompact v-for="recipe in AppState.recipes" :key="recipe.id" :recipe="recipe" />
+      <div class="d-flex flex-column align-items-center text-white"
+        style="transform: translate(0, -25%); font-family: 'Sahitya';">
+        <span class=" fs-1">All-Spice</span>
+        <span class="fs-3">Cherish Your Family</span>
+        <span class="fs-3">And Their Cooking</span>
       </div>
     </div>
 
-    <button id="createButton" type="button" class="btn rounded-circle position-absolute text-white fs-1"
+    <div class="d-flex justify-content-center w-100">
+      <nav class="bg-white shadow px-3 py-1" style="transform: translate(0, -50%);">
+        <button class="btn text-success">
+          Home
+        </button>
+        <button class="btn text-success">
+          My Recipes
+        </button>
+        <button class="btn text-success">
+          Favorites
+        </button>
+      </nav>
+    </div>
+
+    <div v-if="!(AppState.account && AppState.recipes)"
+      class="d-flex justify-content-center align-items-center w-100 h-100">
+      <i class="mdi mdi-loading spinning fs-1"></i>
+    </div>
+
+    <div v-else class="d-flex flex flex-wrap gap-5 mx-3 mt-5">
+      <RecipeCompact v-for="recipe in AppState.recipes" :key="recipe.id" :recipe="recipe" />
+    </div>
+
+    <button id="createButton" type="button" class="btn rounded-circle position-fixed end-0 bottom-0 m-5 text-white fs-1"
       data-bs-toggle="modal" data-bs-target="#createRecipeModal" style="background-color: #587464;">
       <i class="mdi mdi-plus"></i>
     </button>
 
     <div>
       <CreateRecipeModal />
-      <RecipeDetailsModal />
+      <ViewRecipeModal />
     </div>
   </main>
 </template>
@@ -67,7 +96,19 @@ async function getRecipes() {
 #createButton {
   width: 5rem;
   height: 5rem;
-  top: 80%;
-  left: 90%;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

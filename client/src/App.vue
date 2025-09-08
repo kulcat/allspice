@@ -5,17 +5,9 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <header>
-    <Navbar />
-  </header>
   <main>
-    <RouterView/>
+    <RouterView />
   </main>
-  <footer class=" text-center">
-  </footer>
 </template>
 
-<style lang="scss">
-
-
-</style>
+<style lang="scss"></style>

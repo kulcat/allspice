@@ -5,13 +5,19 @@ import { computed, ref } from 'vue';
 import { Pop } from '../utils/Pop';
 import { recipeService } from '../services/RecipeService';
 import { Modal } from 'bootstrap';
-import { Ingredient } from '@/models/Ingredient';
+
 
 const title = ref("");
 const img = ref("");
 const selectedCategory = ref("");
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert'];
 const instructions = ref("");
+
+var editMode = false;
+
+function selectRecipe(selected) {
+  selectedCategory.value = selected;
+}
 
 async function submitForm() {
   try {
@@ -21,10 +27,6 @@ async function submitForm() {
       category: selectedCategory.value,
       instructions: instructions.value,
     };
-
-    const ingredientData = {
-
-    }
 
     await recipeService.createRecipe(recipeData);
     await recipeService.getRecipes();
@@ -42,20 +44,6 @@ async function submitForm() {
 
 const imgError = (e) => {
   e.target.src = "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
-}
-
-const ingredients = ref([]);
-const ingredientName = ref("");
-const ingredientQuantity = ref("");
-
-async function addIngredient() {
-  const ingredientData = {
-    name: ingredientName,
-    quanitty: ingredientQuantity,
-  }
-  const newIngredient = new Ingredient(ingredientData);
-  ingredients.value.push(newIngredient);
-  // unfinished
 }
 
 </script>
@@ -82,45 +70,65 @@ async function addIngredient() {
               <div class="d-flex">
                 <div class="d-flex flex-column">
                   <span>
-                    <input class="fs-2" name="title" v-model="title" placeholder="Title" :required="true">
+                    <input name="title" v-model="title" placeholder="Title" :required="true">
                   </span>
                   <span>
                     by: {{ AppState?.account?.name }}
                   </span>
                 </div>
+                <div>
+                  <button type="button" class="btn" data-bs-toggle="dropdown" data-bs-target="dropdown">
+                    {{ selectedCategory || "Select a category" }}
+                  </button>
+
+                  <ul class="dropdown-menu">
+                    <li>
+                      <button class="dropdown-item" @click="editMode = !editMode">
+                        Edit
+                      </button>
+                      <button class="dropdown-item">
+                        Delete
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               <div>
-                <select class="dropdown-toggle" v-model="selectedCategory" required>
-                  <option value="" disabled>Select a category...</option>
-                  <option v-for="category in categories" :key="category">{{ category }}</option>
-                </select>
+                <button type="button" class="btn" data-bs-toggle="dropdown" data-bs-target="dropdown">
+                  {{ selectedCategory || "Select a category" }}
+                </button>
+
+                <ul class="dropdown-menu">
+                  <li v-for="category in categories" :key="category">
+                    <button class="dropdown-item" @click="selectRecipe(category)">
+                      {{ category }}
+                    </button>
+                  </li>
+                </ul>
               </div>
 
               <div class="d-flex flex-column">
-                <span class="fs-3">Ingredients</span>
-                <div class="d-flex flex-column flex-fill">
-                  <RecipeIngredient v-for="ingredient in ingredients" :key="ingredient.id" :ingredient="ingredient" />
+                <span>Ingredients</span>
+                <div>
+                  <RecipeIngredient />
                 </div>
                 <div class="d-flex">
-                  <input v-model="ingredientQuantity" placeholder="Ingredient Quantity">
-                  <input v-model="ingredientName" placeholder="Ingredient Name">
-                  <button type="button" class="btn rounded-circle text-white"
-                    style="background-color: #587464; width: 2.5rem; height: 2.5rem;" @click="addIngredient">
-                    <i class="mdi mdi-plus"></i>
-                  </button>
+                  <input placeholder="Ingredient Quantity">
+                  <input placeholder="Ingredient Name">
+                  <div class="btn" type="button"></div>
                 </div>
               </div>
 
               <div class="d-flex flex-column w-100">
-                <span class="fs-3">Instructions</span>
+                <span>Instructions</span>
                 <textarea class="w-100" v-model="instructions">
 
                 </textarea>
               </div>
               <div>
 
-                <button type="submit" class="btn btn-primary position-fixed end-0 bottom-0 m-2 fs-5">Create</button>
+                <button type="submit" class="btn btn-primary">Create</button>
               </div>
             </form>
           </div>
