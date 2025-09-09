@@ -35,22 +35,22 @@ async function getRecipes() {
 <template>
   <main class="container position-relative p-3 d-flex flex-column align-items-center">
 
-    <div class="d-flex flex-column justify-content-center w-100 position-relative" style="height: 25dvh;">
+    <div class="d-flex flex-column w-100 position-relative" style="height: 30dvh;">
 
       <div class="position-absolute top-0 start-0 w-100 h-100 rounded-2 shadow z-n1"
         style="background: url('https://sestra.nl/wp-content/uploads/2019/06/Het-wachten-waard-1024x683.jpg') center/cover no-repeat">
       </div>
 
       <div class="d-flex justify-content-end w-100 gap-3 px-3 py-1">
-        <div class="d-flex gap-3">
+        <div class="d-flex align-items-center position-relative">
           <input type="text" v-model="search" placeholder="Search">
-          <button class="btn"><i class="mdi mdi-magnify"></i></button>
+          <button class="btn position-absolute" style="right:0;"><i class="mdi mdi-magnify"></i></button>
         </div>
         <Login />
       </div>
 
-      <div class="d-flex flex-column align-items-center text-white"
-        style="transform: translate(0, -25%); font-family: 'Sahitya';">
+      <div class="d-flex flex-column justify-content-center align-items-center text-white"
+        style="font-family: 'Sahitya';">
         <span class=" fs-1">All-Spice</span>
         <span class="fs-3">Cherish Your Family</span>
         <span class="fs-3">And Their Cooking</span>

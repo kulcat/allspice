@@ -29,6 +29,20 @@ public class IngredientController : ControllerBase
     }
   }
 
+  [HttpGet("recipe_id")]
+  public ActionResult<IEnumerable<Ingredient>> GetIngredientsByRecipeId(int id)
+  {
+    try
+    {
+      var ingredients = _service.GetIngredientsByRecipeId(id);
+      return Ok(ingredients);
+    }
+    catch (Exception e)
+    {
+      return BadRequest(e.Message);
+    }
+  }
+
   [HttpGet("{id}")]
   public ActionResult<Ingredient> GetIngredientById(int id)
   {

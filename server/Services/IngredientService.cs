@@ -16,6 +16,11 @@ public class IngredientsService
     return _repo.GetById(id);
   }
 
+  public Ingredient GetIngredientsByRecipeId(int id)
+  {
+    return _repo.GetById(id);
+  }
+
   public Ingredient CreateIngredient(Ingredient Ingredient)
   {
     return _repo.Create(Ingredient);

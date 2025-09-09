@@ -51,7 +51,7 @@ const ingredientQuantity = ref("");
 async function addIngredient() {
   const ingredientData = {
     name: ingredientName,
-    quanitty: ingredientQuantity,
+    quantity: ingredientQuantity,
   }
   const newIngredient = new Ingredient(ingredientData);
   ingredients.value.push(newIngredient);

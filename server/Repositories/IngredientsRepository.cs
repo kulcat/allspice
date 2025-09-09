@@ -35,6 +35,12 @@ public class IngredientsRepository : IRepository<Ingredient>
     return _db.Query<Ingredient>(sql).ToList();
   }
 
+  public List<Ingredient> GetByRecipeId(int id)
+  {
+    string sql = @"SELECT * FROM Ingredients WHERE recipe_id = @id";
+    return _db.Query<Ingredient>(sql).ToList();
+  }
+
   public Ingredient GetById(int id)
   {
     string sql = @"SELECT * FROM Ingredients WHERE id = @id";
