@@ -7,5 +7,7 @@ export class Recipe {
     this.img = data.img;
     this.category = data.category;
     this.creator_id = data.creator_id;
+    this.creator = data.creator;
+    this.ingredients = data.ingredients;
   }
 }

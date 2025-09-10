@@ -3,13 +3,13 @@ namespace allspice.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class IngredientController : ControllerBase
+public class IngredientsController : ControllerBase
 {
   private readonly IngredientsService _service;
   private readonly Auth0Provider _auth0Provider;
 
 
-  public IngredientController(IngredientsService service, Auth0Provider auth0Provider)
+  public IngredientsController(IngredientsService service, Auth0Provider auth0Provider)
   {
     _service = service;
     _auth0Provider = auth0Provider;
@@ -21,20 +21,6 @@ public class IngredientController : ControllerBase
     try
     {
       var ingredients = _service.GetIngredients();
-      return Ok(ingredients);
-    }
-    catch (Exception e)
-    {
-      return BadRequest(e.Message);
-    }
-  }
-
-  [HttpGet("recipe_id")]
-  public ActionResult<IEnumerable<Ingredient>> GetIngredientsByRecipeId(int id)
-  {
-    try
-    {
-      var ingredients = _service.GetIngredientsByRecipeId(id);
       return Ok(ingredients);
     }
     catch (Exception e)
@@ -58,12 +44,26 @@ public class IngredientController : ControllerBase
   }
 
   [HttpPost]
-  public ActionResult<Ingredient> CreateIngredient([FromBody] Ingredient Ingredient)
+  public ActionResult<Ingredient> CreateIngredient([FromBody] Ingredient ingredient)
   {
     try
     {
-      var newIngredient = _service.CreateIngredient(Ingredient);
+      var newIngredient = _service.CreateIngredient(ingredient);
       return Ok(newIngredient);
+    }
+    catch (Exception e)
+    {
+      return BadRequest(e.Message);
+    }
+  }
+
+  [HttpPost("bulk")]
+  public ActionResult<List<Ingredient>> CreateIngredients([FromBody] List<Ingredient> ingredients)
+  {
+    try
+    {
+      var newIngredients = _service.CreateIngredients(ingredients);
+      return Ok(newIngredients);
     }
     catch (Exception e)
     {

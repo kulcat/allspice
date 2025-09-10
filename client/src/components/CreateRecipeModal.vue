@@ -6,12 +6,30 @@ import { Pop } from '../utils/Pop';
 import { recipeService } from '../services/RecipeService';
 import { Modal } from 'bootstrap';
 import { Ingredient } from '@/models/Ingredient';
+import { ingredientService } from '@/services/IngredientService';
 
 const title = ref("");
 const img = ref("");
 const selectedCategory = ref("");
 const categories = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert'];
 const instructions = ref("");
+
+const ingredients = ref([]);
+const ingredientName = ref("");
+const ingredientQuantity = ref("");
+
+function addIngredient() {
+  const ingredientData = {
+    name: ingredientName.value,
+    quantity: ingredientQuantity.value,
+  }
+  const newIngredient = new Ingredient(ingredientData);
+  ingredients.value.push(newIngredient);
+}
+
+function removeIngredient(index) {
+  ingredients.value.splice(index, 1);
+}
 
 async function submitForm() {
   try {
@@ -22,17 +40,25 @@ async function submitForm() {
       instructions: instructions.value,
     };
 
-    const ingredientData = {
-
-    }
-
-    await recipeService.createRecipe(recipeData);
-    await recipeService.getRecipes();
+    const recipe = await recipeService.createRecipe(recipeData);
     Pop.toast('Recipe created!', 'success');
+
+    await ingredientService.createIngredients(ingredients.value, recipe.id);
+    await recipeService.getRecipes();
 
     const modalElm = document.getElementById('createRecipeModal');
     const modal = Modal.getInstance(modalElm);
     modal.hide();
+
+    title.value = "";
+    img.value = "";
+    selectedCategory.value = "";
+    instructions.value = "";
+
+    ingredients.value.length = 0;
+    ingredientName.value = "";
+    ingredientQuantity.value = "";
+
   }
   catch (error) {
     Pop.toast('Could not create recipe', 'error');
@@ -42,20 +68,6 @@ async function submitForm() {
 
 const imgError = (e) => {
   e.target.src = "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png";
-}
-
-const ingredients = ref([]);
-const ingredientName = ref("");
-const ingredientQuantity = ref("");
-
-async function addIngredient() {
-  const ingredientData = {
-    name: ingredientName,
-    quantity: ingredientQuantity,
-  }
-  const newIngredient = new Ingredient(ingredientData);
-  ingredients.value.push(newIngredient);
-  // unfinished
 }
 
 </script>
@@ -81,9 +93,7 @@ async function addIngredient() {
             <form @submit.prevent="submitForm">
               <div class="d-flex">
                 <div class="d-flex flex-column">
-                  <span>
-                    <input class="fs-2" name="title" v-model="title" placeholder="Title" :required="true">
-                  </span>
+                  <input class="fs-2" name="title" v-model="title" placeholder="Title" :required="true">
                   <span>
                     by: {{ AppState?.account?.name }}
                   </span>
@@ -100,7 +110,13 @@ async function addIngredient() {
               <div class="d-flex flex-column">
                 <span class="fs-3">Ingredients</span>
                 <div class="d-flex flex-column flex-fill">
-                  <RecipeIngredient v-for="ingredient in ingredients" :key="ingredient.id" :ingredient="ingredient" />
+                  <div class="d-flex" v-for="(ingredient, index) in ingredients" :key="ingredient.id">
+                    <button type="button" class="btn" @click="removeIngredient(index)">
+                      <i class="mdi mdi-close text-danger"></i>
+                    </button>
+                    <span>{{ ingredient?.quantity }} {{ ingredient?.name }}</span>
+
+                  </div>
                 </div>
                 <div class="d-flex">
                   <input v-model="ingredientQuantity" placeholder="Ingredient Quantity">

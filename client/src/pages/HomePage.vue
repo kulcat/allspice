@@ -4,6 +4,7 @@ import CreateRecipeModal from '@/components/CreateRecipeModal.vue';
 import Login from '@/components/Login.vue';
 import RecipeCompact from '@/components/RecipeCompact.vue';
 import ViewRecipeModal from '@/components/ViewRecipeModal.vue';
+import { ingredientService } from '@/services/IngredientService';
 import { recipeService } from '@/services/RecipeService';
 import { Pop } from '@/utils/Pop';
 import { computed, ref, watch } from 'vue';
@@ -16,9 +17,30 @@ watch(
   { immediate: true }
 );
 
-const recipes = computed(() => AppState.recipes);
+const recipes = computed(() => {
+  let result = AppState.recipes;
+
+  if (search.value) {
+    const query = search.value.toLowerCase();
+    result = result.filter(r =>
+      r.title.toLowerCase().includes(query) ||
+      r.category.toLowerCase().includes(query) ||
+      r.creator.name.toLowerCase().includes(query)
+    );
+  }
+
+  if (currentFilter.value == 'created') {
+    result = result.filter(recipe => recipe.creator.id === AppState.account.id);
+  }
+  // else if(currentFilter.value == 'favorites') {
+  //   
+  // }
+
+  return result;
+});
 
 const search = ref("");
+const currentFilter = ref(null);
 
 async function getRecipes() {
   try {
@@ -41,10 +63,10 @@ async function getRecipes() {
         style="background: url('https://sestra.nl/wp-content/uploads/2019/06/Het-wachten-waard-1024x683.jpg') center/cover no-repeat">
       </div>
 
-      <div class="d-flex justify-content-end w-100 gap-3 px-3 py-1">
-        <div class="d-flex align-items-center position-relative">
-          <input type="text" v-model="search" placeholder="Search">
-          <button class="btn position-absolute" style="right:0;"><i class="mdi mdi-magnify"></i></button>
+      <div class="d-flex justify-content-end align-items-center w-100 gap-3 px-3 py-1">
+        <div class="d-flex align-items-center position-relative bg-white rounded-2 px-1" style="height: 2.5rem">
+          <input type="text" class="border-0" v-model="search" placeholder="Search">
+          <button class="btn" style="right:0;"><i class="mdi mdi-magnify fs-5"></i></button>
         </div>
         <Login />
       </div>
@@ -59,25 +81,26 @@ async function getRecipes() {
 
     <div class="d-flex justify-content-center w-100">
       <nav class="bg-white shadow px-3 py-1" style="transform: translate(0, -50%);">
-        <button class="btn text-success">
+        <button type="button" class="btn text-success" @click="currentFilter = null">
           Home
         </button>
-        <button class="btn text-success">
+        <button type="button" class="btn text-success" @click="currentFilter = 'created'">
           My Recipes
         </button>
-        <button class="btn text-success">
+        <button type="button" class="btn text-success" @click="currentFilter = 'favorites'">
           Favorites
         </button>
       </nav>
     </div>
 
-    <div v-if="!(AppState.account && AppState.recipes)"
+    <div v-if="!(AppState.recipes && AppState.account)"
       class="d-flex justify-content-center align-items-center w-100 h-100">
-      <i class="mdi mdi-loading spinning fs-1"></i>
+      <i v-if="!AppState.recipes" class="mdi mdi-loading spinning fs-1"></i>
+      <span v-else >Please log in</span>
     </div>
 
-    <div v-else class="d-flex flex flex-wrap gap-5 mx-3 mt-5">
-      <RecipeCompact v-for="recipe in AppState.recipes" :key="recipe.id" :recipe="recipe" />
+    <div v-else class="d-flex flex flex-wrap justify-content-center gap-5 mx-3 mt-5">
+      <RecipeCompact v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
     </div>
 
     <button id="createButton" type="button" class="btn rounded-circle position-fixed end-0 bottom-0 m-5 text-white fs-1"

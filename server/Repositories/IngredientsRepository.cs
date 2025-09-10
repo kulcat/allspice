@@ -22,6 +22,17 @@ public class IngredientsRepository : IRepository<Ingredient>
     return data;
   }
 
+  public List<Ingredient> CreateMultiple(List<Ingredient> ingredients)
+  {
+    string sql = @"
+    INSERT INTO 
+    Ingredients(name, quantity, recipe_id) 
+    VALUES(@Name, @Quantity, @Recipe_id)";
+
+    int numInserted = _db.Execute(sql, ingredients);
+    return ingredients;
+  }
+
   public bool Delete(int id)
   {
     string sql = @"DELETE FROM Ingredients WHERE id = @id LIMIT 1";
@@ -32,12 +43,6 @@ public class IngredientsRepository : IRepository<Ingredient>
   public List<Ingredient> GetAll()
   {
     string sql = @"SELECT * FROM Ingredients";
-    return _db.Query<Ingredient>(sql).ToList();
-  }
-
-  public List<Ingredient> GetByRecipeId(int id)
-  {
-    string sql = @"SELECT * FROM Ingredients WHERE recipe_id = @id";
     return _db.Query<Ingredient>(sql).ToList();
   }
 
@@ -54,7 +59,7 @@ public class IngredientsRepository : IRepository<Ingredient>
       SET 
         name = @Name,
         quantity = @Quantity,
-        recipe_id = @Recipe_id,
+        recipe_id = @Recipe_id
       WHERE id = @Id;
       SELECT * FROM Ingredients WHERE id = @Id;
     ";

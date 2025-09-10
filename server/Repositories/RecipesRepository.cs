@@ -14,7 +14,7 @@ public class RecipesRepository : IRepository<Recipe>
   {
     string sql = @"
     INSERT INTO 
-    Recipes(title, instructions, img, category, creator_Id)
+    Recipes(title, instructions, img, category, creator_id)
     VALUES(@Title, @Instructions, @Img, @Category, @Creator_id);
     SELECT LAST_INSERT_ID();";
 
@@ -32,13 +32,50 @@ public class RecipesRepository : IRepository<Recipe>
 
   public List<Recipe> GetAll()
   {
-    string sql = @"SELECT * FROM Recipes";
-    return _db.Query<Recipe>(sql).ToList();
+    string sql = @"
+      SELECT 
+          r.id, r.title, r.instructions, r.img, r.category, r.created_at, r.updated_at,
+          a.id, a.name, a.email, a.picture, a.created_at, a.updated_at,
+          i.id, i.name, i.quantity, i.created_at, i.updated_at, i.recipe_id
+      FROM Recipes r
+      JOIN Accounts a ON a.id = r.creator_id
+      LEFT JOIN Ingredients i ON i.recipe_id = r.id;
+    ";
+
+    var recipeDict = new Dictionary<int, Recipe>();
+
+    var recipes = _db.Query<Recipe, Account, Ingredient, Recipe>(
+        sql,
+        (recipe, account, ingredient) =>
+        {
+          if (!recipeDict.TryGetValue(recipe.Id, out var currentRecipe))
+          {
+            currentRecipe = recipe;
+            currentRecipe.Creator = account;
+            currentRecipe.Ingredients = new List<Ingredient>();
+            recipeDict.Add(currentRecipe.Id, currentRecipe);
+          }
+
+          if (ingredient != null && ingredient.Id != 0)
+          {
+            currentRecipe.Ingredients.Add(ingredient);
+          }
+
+          return currentRecipe;
+        },
+        splitOn: "Id, Id"
+    );
+
+    return recipeDict.Values.ToList();
   }
 
   public Recipe GetById(int id)
   {
-    string sql = @"SELECT * FROM Recipes WHERE id = @id";
+    string sql = @"SELECT Recipes.*, Accounts.*
+      FROM Recipes
+      JOIN Accounts ON Accounts.id = Recipes.creator_id
+      WHERE id = @id;
+    ";
     return _db.QueryFirstOrDefault<Recipe>(sql, new { id });
   }
 

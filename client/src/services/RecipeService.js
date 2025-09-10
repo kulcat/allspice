@@ -26,9 +26,25 @@ class RecipeService {
 
       const response = await api.post('api/Recipes', newRecipe);
       console.log(response);
+
+      return response.data;
     } catch (e) {
       Pop.toast(e, 'error');
     }
+  }
+
+  async deleteRecipe(id) {
+    try {
+      const response = await api.delete(`api/Recipes/${id}`);
+      console.log(response);
+      this.getRecipes();
+    } catch (e) {
+      Pop.toast(e, 'error');
+    }
+  }
+
+  async setActiveRecipe(recipe) {
+    AppState.activeRecipe = recipe;
   }
 
 }

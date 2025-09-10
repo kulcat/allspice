@@ -16,14 +16,14 @@ public class IngredientsService
     return _repo.GetById(id);
   }
 
-  public Ingredient GetIngredientsByRecipeId(int id)
+  public Ingredient CreateIngredient(Ingredient ingredient)
   {
-    return _repo.GetById(id);
+    return _repo.Create(ingredient);
   }
 
-  public Ingredient CreateIngredient(Ingredient Ingredient)
+  public List<Ingredient> CreateIngredients(List<Ingredient> ingredients)
   {
-    return _repo.Create(Ingredient);
+    return _repo.CreateMultiple(ingredients);
   }
 
   public bool DeleteIngredient(int id)

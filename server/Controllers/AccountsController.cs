@@ -3,14 +3,14 @@ namespace allspice.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize]
-public class AccountController : ControllerBase
+public class AccountsController : ControllerBase
 {
-  private readonly AccountsService _accountService;
+  private readonly AccountsService _accountsService;
   private readonly Auth0Provider _auth0Provider;
 
-  public AccountController(AccountsService accountService, Auth0Provider auth0Provider)
+  public AccountsController(AccountsService accountsService, Auth0Provider auth0Provider)
   {
-    _accountService = accountService;
+    _accountsService = accountsService;
     _auth0Provider = auth0Provider;
   }
 
@@ -21,7 +21,7 @@ public class AccountController : ControllerBase
     try
     {
       Account userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      return Ok(_accountService.GetOrCreateAccount(userInfo));
+      return Ok(_accountsService.GetOrCreateAccount(userInfo));
     }
     catch (Exception e)
     {
