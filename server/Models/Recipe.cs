@@ -13,4 +13,7 @@ public class Recipe
   public string Creator_id { get; set; }
   public Account Creator { get; set; }
   public List<Ingredient> Ingredients { get; set; }
+
+  public List<Favorite> Favorites { get; set; }
+  public int FavoriteCount { get; set; }
 }

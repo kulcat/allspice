@@ -14,8 +14,8 @@ public class FavoritesRepository : IRepository<Favorite>
   {
     string sql = @"
     INSERT INTO 
-    Favorites(recipe_id, creator_Id)
-    VALUES(@Recipe_id, @Creator_id))";
+    Favorites(recipe_id, account_id)
+    VALUES(@Recipe_id, @Account_id)";
 
     int id = _db.ExecuteScalar<int>(sql, data);
     data.Id = id;

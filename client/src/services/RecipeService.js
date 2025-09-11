@@ -27,6 +27,21 @@ class RecipeService {
       const response = await api.post('api/Recipes', newRecipe);
       console.log(response);
 
+      this.getRecipes();
+
+      return response.data;
+    } catch (e) {
+      Pop.toast(e, 'error');
+    }
+  }
+
+  async updateRecipe(recipeData) {
+    try {
+      const newRecipe = new Recipe(recipeData);
+
+      const response = await api.put(`api/Recipes/${AppState.activeRecipe.id}`, newRecipe);
+      console.log(response);
+
       return response.data;
     } catch (e) {
       Pop.toast(e, 'error');
@@ -44,7 +59,9 @@ class RecipeService {
   }
 
   async setActiveRecipe(recipe) {
-    AppState.activeRecipe = recipe;
+    const response = await api.get(`api/Recipes/${recipe.id}`);
+    AppState.activeRecipe = response.data;
+    console.log(response);
   }
 
 }

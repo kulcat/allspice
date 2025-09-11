@@ -20,10 +20,10 @@ class IngredientService {
     }
   }
 
-  async createIngredient(data) {
+  async createIngredient(data, recipe_id) {
     try {
       const newIngredient = new Ingredient(data);
-      newIngredient.recipe_id = AppState.account.id;
+      newIngredient.recipe_id = recipe_id;
 
       const response = await api.post('api/Ingredients', newIngredient);
       console.log(response);
@@ -38,7 +38,7 @@ class IngredientService {
         ingredient.recipe_id = recipe_id;
       })
 
-      const response = await api.post('api/Ingredients/bulk', ingredients);
+      const response = await api.post('api/Ingredients/bulk-post', ingredients);
       console.log(response);
     } catch (e) {
       Pop.toast(e, 'error');
@@ -49,6 +49,15 @@ class IngredientService {
   async deleteIngredient(id) {
     try {
       const response = await api.delete(`api/Ingredients/${id}`);
+      console.log(response);
+    } catch (e) {
+      Pop.toast(e, 'error');
+    }
+  }
+
+  async deleteIngredients(ids) {
+    try {
+      const response = await api.post(`api/Ingredients/bulk-delete`, ids);
       console.log(response);
     } catch (e) {
       Pop.toast(e, 'error');

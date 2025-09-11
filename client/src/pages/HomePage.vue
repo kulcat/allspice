@@ -32,9 +32,11 @@ const recipes = computed(() => {
   if (currentFilter.value == 'created') {
     result = result.filter(recipe => recipe.creator.id === AppState.account.id);
   }
-  // else if(currentFilter.value == 'favorites') {
-  //   
-  // }
+  else if(currentFilter.value == 'favorites') {
+    result = result.filter(r => 
+      r.favorites.some(f => f.account_id === AppState.account.id)
+    );
+  }
 
   return result;
 });

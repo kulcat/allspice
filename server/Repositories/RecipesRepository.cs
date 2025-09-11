@@ -33,51 +33,106 @@ public class RecipesRepository : IRepository<Recipe>
   public List<Recipe> GetAll()
   {
     string sql = @"
-      SELECT 
-          r.id, r.title, r.instructions, r.img, r.category, r.created_at, r.updated_at,
-          a.id, a.name, a.email, a.picture, a.created_at, a.updated_at,
-          i.id, i.name, i.quantity, i.created_at, i.updated_at, i.recipe_id
-      FROM Recipes r
-      JOIN Accounts a ON a.id = r.creator_id
-      LEFT JOIN Ingredients i ON i.recipe_id = r.id;
+        SELECT 
+            r.id, r.title, r.instructions, r.img, r.category, r.created_at, r.updated_at,
+            a.id, a.name, a.email, a.picture, a.created_at, a.updated_at,
+            i.id, i.name, i.quantity, i.created_at, i.updated_at, i.recipe_id,
+            f.id, f.account_id, f.created_at, f.updated_at
+        FROM Recipes r
+        JOIN Accounts a ON a.id = r.creator_id
+        LEFT JOIN Ingredients i ON i.recipe_id = r.id
+        LEFT JOIN Favorites f ON f.recipe_id = r.id
+        ORDER BY r.created_at DESC;
     ";
 
     var recipeDict = new Dictionary<int, Recipe>();
 
-    var recipes = _db.Query<Recipe, Account, Ingredient, Recipe>(
+    var recipes = _db.Query<Recipe, Account, Ingredient, Favorite, Recipe>(
         sql,
-        (recipe, account, ingredient) =>
+        (recipe, account, ingredient, favorite) =>
         {
           if (!recipeDict.TryGetValue(recipe.Id, out var currentRecipe))
           {
             currentRecipe = recipe;
             currentRecipe.Creator = account;
             currentRecipe.Ingredients = new List<Ingredient>();
+            currentRecipe.Favorites = new List<Favorite>();
             recipeDict.Add(currentRecipe.Id, currentRecipe);
           }
 
-          if (ingredient != null && ingredient.Id != 0)
+          if (ingredient != null && ingredient.Id != 0 &&
+              !currentRecipe.Ingredients.Any(i => i.Id == ingredient.Id))
           {
             currentRecipe.Ingredients.Add(ingredient);
           }
 
+          if (favorite != null && favorite.Id != 0 &&
+              !currentRecipe.Favorites.Any(f => f.Id == favorite.Id))
+          {
+            currentRecipe.Favorites.Add(favorite);
+          }
+
           return currentRecipe;
         },
-        splitOn: "Id, Id"
+        splitOn: "Id,Id,Id"
     );
 
     return recipeDict.Values.ToList();
   }
 
+
+
   public Recipe GetById(int id)
   {
-    string sql = @"SELECT Recipes.*, Accounts.*
-      FROM Recipes
-      JOIN Accounts ON Accounts.id = Recipes.creator_id
-      WHERE id = @id;
+    string sql = @"
+        SELECT 
+            r.id, r.title, r.instructions, r.img, r.category, r.created_at, r.updated_at,
+            a.id, a.name, a.email, a.picture, a.created_at, a.updated_at,
+            i.id, i.name, i.quantity, i.created_at, i.updated_at, i.recipe_id,
+            f.id, f.account_id, f.created_at, f.updated_at
+        FROM Recipes r
+        JOIN Accounts a ON a.id = r.creator_id
+        LEFT JOIN Ingredients i ON i.recipe_id = r.id
+        LEFT JOIN Favorites f ON f.recipe_id = r.id
+        WHERE r.id = @Id
     ";
-    return _db.QueryFirstOrDefault<Recipe>(sql, new { id });
+
+    var recipeDict = new Dictionary<int, Recipe>();
+
+    var recipes = _db.Query<Recipe, Account, Ingredient, Favorite, Recipe>(
+        sql,
+        (recipe, account, ingredient, favorite) =>
+        {
+          if (!recipeDict.TryGetValue(recipe.Id, out var currentRecipe))
+          {
+            currentRecipe = recipe;
+            currentRecipe.Creator = account;
+            currentRecipe.Ingredients = new List<Ingredient>();
+            currentRecipe.Favorites = new List<Favorite>();
+            recipeDict.Add(currentRecipe.Id, currentRecipe);
+          }
+
+          if (ingredient != null && ingredient.Id != 0 &&
+              !currentRecipe.Ingredients.Any(i => i.Id == ingredient.Id))
+          {
+            currentRecipe.Ingredients.Add(ingredient);
+          }
+
+          if (favorite != null && favorite.Id != 0 &&
+              !currentRecipe.Favorites.Any(f => f.Id == favorite.Id))
+          {
+            currentRecipe.Favorites.Add(favorite);
+          }
+
+          return currentRecipe;
+        },
+        new { Id = id },
+        splitOn: "Id,Id,Id"
+    );
+
+    return recipeDict.Values.FirstOrDefault();
   }
+
 
   public Recipe Update(Recipe updateData)
   {
@@ -87,8 +142,7 @@ public class RecipesRepository : IRepository<Recipe>
         title = @Title,
         instructions = @Instructions,
         img = @Img,
-        category = @Category,
-        creator_id = @Creator_id
+        category = @Category
       WHERE id = @Id;
       SELECT * FROM Recipes WHERE id = @Id;
     ";

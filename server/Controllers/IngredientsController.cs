@@ -57,7 +57,7 @@ public class IngredientsController : ControllerBase
     }
   }
 
-  [HttpPost("bulk")]
+  [HttpPost("bulk-post")]
   public ActionResult<List<Ingredient>> CreateIngredients([FromBody] List<Ingredient> ingredients)
   {
     try
@@ -77,6 +77,20 @@ public class IngredientsController : ControllerBase
     try
     {
       var result = _service.DeleteIngredient(id);
+      return Ok(result);
+    }
+    catch (Exception e)
+    {
+      return BadRequest(e.Message);
+    }
+  }
+
+  [HttpPost("bulk-delete")]
+  public ActionResult<string> DeleteIngredients(List<int> ids)
+  {
+    try
+    {
+      var result = _service.DeleteIngredients(ids);
       return Ok(result);
     }
     catch (Exception e)

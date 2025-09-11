@@ -7,6 +7,6 @@ public class Favorite
   [JsonPropertyName("id")]
   public int Id { get; set; }
   public int Recipe_id { get; set; }
-  public int Account_id { get; set; }
+  public string Account_id { get; set; }
 
 }

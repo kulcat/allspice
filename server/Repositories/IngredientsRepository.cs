@@ -40,6 +40,13 @@ public class IngredientsRepository : IRepository<Ingredient>
     return rowsAffected > 0;
   }
 
+  public bool DeleteMultiple(List<int> ids)
+  {
+    string sql = "DELETE FROM Ingredients WHERE id IN @Ids";
+    int rowsAffected = _db.Execute(sql, new { Ids = ids });
+    return rowsAffected > 0;
+  }
+
   public List<Ingredient> GetAll()
   {
     string sql = @"SELECT * FROM Ingredients";

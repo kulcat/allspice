@@ -31,6 +31,11 @@ public class IngredientsService
     return _repo.Delete(id);
   }
 
+  public bool DeleteIngredients(List<int> ids)
+  {
+    return _repo.DeleteMultiple(ids);
+  }
+
   public Ingredient UpdateIngredient(int id, Ingredient updateData)
   {
     return _repo.Update(id, updateData);
