@@ -6,7 +6,7 @@ export class Recipe {
     this.instructions = data.instructions;
     this.img = data.img;
     this.category = data.category;
-    this.creator_id = data.creator_id;
+    this.creator_id = data.creatorId;
     this.creator = data.creator;
     this.ingredients = data.ingredients;
     this.favoriteCount = data.favoriteCount;

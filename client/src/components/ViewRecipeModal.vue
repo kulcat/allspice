@@ -57,12 +57,14 @@ function onModalHidden() {
 }
 
 function addIngredient() {
-  const ingredientData = {
-    name: ingredientName.value,
-    quantity: ingredientQuantity.value,
+  if(ingredientName.value && ingredientQuantity.value) {
+    const ingredientData = {
+      name: ingredientName.value,
+      quantity: ingredientQuantity.value,
+    }
+    const newIngredient = new Ingredient(ingredientData);
+    ingredientsToAdd.value.push(newIngredient);
   }
-  const newIngredient = new Ingredient(ingredientData);
-  ingredientsToAdd.value.push(newIngredient);
 }
 
 function removeIngredient(ingredient, index) {

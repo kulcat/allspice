@@ -19,12 +19,14 @@ const ingredientName = ref("");
 const ingredientQuantity = ref("");
 
 function addIngredient() {
-  const ingredientData = {
-    name: ingredientName.value,
-    quantity: ingredientQuantity.value,
+  if(ingredientName.value && ingredientQuantity.value) {
+    const ingredientData = {
+      name: ingredientName.value,
+      quantity: ingredientQuantity.value,
+    }
+    const newIngredient = new Ingredient(ingredientData);
+    ingredients.value.push(newIngredient);  
   }
-  const newIngredient = new Ingredient(ingredientData);
-  ingredients.value.push(newIngredient);
 }
 
 function removeIngredient(index) {
@@ -74,10 +76,10 @@ const imgError = (e) => {
 
 <template>
   <div class="modal fade" id="createRecipeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog m-0 p-0 modal-fullscreen">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content m-0 p-0">
         <div class="modal-body d-flex flex-column flex-md-row m-0 p-0 ">
-          <button type="button" class="btn-close position-fixed end-0 top-0 m-2 fs-5" data-bs-dismiss="modal"
+          <button type="button" class="btn-close position-absolute end-0 top-0 m-2 fs-5" data-bs-dismiss="modal"
             aria-label="Close" style="z-index: 100"></button>
 
           <div class="img-container col-md-6 m-0 p-0 position-relative" style="">
@@ -134,9 +136,8 @@ const imgError = (e) => {
 
                 </textarea>
               </div>
-              <div>
-
-                <button type="submit" class="btn btn-primary position-fixed end-0 bottom-0 m-2 fs-5">Create</button>
+              <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary position-relative end-0 bottom-0 m-2 fs-5">Create</button>
               </div>
             </form>
           </div>

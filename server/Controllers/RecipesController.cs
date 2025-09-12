@@ -51,7 +51,7 @@ public class RecipesController : ControllerBase
     try
     {
       Account creator = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
-      recipe.Creator_id = creator.Id;
+      recipe.CreatorId = creator.Id;
       var newRecipe = _service.CreateRecipe(recipe);
       return Ok(newRecipe);
     }
@@ -88,4 +88,18 @@ public class RecipesController : ControllerBase
       return BadRequest(e.Message);
     }
   }
+
+  // [HttpPut("{id}/Ingredients")]
+  // public ActionResult<List<Recipe>> GetIngredientsByRecipeId(int id)
+  // {
+  //   try
+  //   {
+  //     var ingredients = _service.GetIngredientsByRecipeId(id, update);
+  //     return Ok(recipe);
+  //   }
+  //   catch (Exception e)
+  //   {
+  //     return BadRequest(e.Message);
+  //   }
+  // }
 }

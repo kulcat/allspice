@@ -13,7 +13,12 @@ public class RecipesService
 
   public Recipe GetRecipeById(int id)
   {
-    return _repo.GetById(id);
+    var recipe = _repo.GetById(id);
+    if (recipe == null)
+    {
+      throw new Exception("invlaid id");
+    }
+    return recipe;
   }
 
   public Recipe CreateRecipe(Recipe Recipe)

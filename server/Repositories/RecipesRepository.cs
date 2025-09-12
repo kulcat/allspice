@@ -15,12 +15,11 @@ public class RecipesRepository : IRepository<Recipe>
     string sql = @"
     INSERT INTO 
     Recipes(title, instructions, img, category, creator_id)
-    VALUES(@Title, @Instructions, @Img, @Category, @Creator_id);
+    VALUES(@Title, @Instructions, @Img, @Category, @CreatorId);
     SELECT LAST_INSERT_ID();";
 
     int id = _db.ExecuteScalar<int>(sql, data);
-    data.Id = id;
-    return data;
+    return GetById(id);
   }
 
   public bool Delete(int id)
@@ -37,7 +36,8 @@ public class RecipesRepository : IRepository<Recipe>
             r.id, r.title, r.instructions, r.img, r.category, r.created_at, r.updated_at,
             a.id, a.name, a.email, a.picture, a.created_at, a.updated_at,
             i.id, i.name, i.quantity, i.created_at, i.updated_at, i.recipe_id,
-            f.id, f.account_id, f.created_at, f.updated_at
+            f.id, f.account_id, f.created_at, f.updated_at,
+            (SELECT COUNT(*) FROM Favorites WHERE recipe_id = r.id) AS FavoriteCount
         FROM Recipes r
         JOIN Accounts a ON a.id = r.creator_id
         LEFT JOIN Ingredients i ON i.recipe_id = r.id
@@ -89,7 +89,8 @@ public class RecipesRepository : IRepository<Recipe>
             r.id, r.title, r.instructions, r.img, r.category, r.created_at, r.updated_at,
             a.id, a.name, a.email, a.picture, a.created_at, a.updated_at,
             i.id, i.name, i.quantity, i.created_at, i.updated_at, i.recipe_id,
-            f.id, f.account_id, f.created_at, f.updated_at
+            f.id, f.account_id, f.created_at, f.updated_at,
+            (SELECT COUNT(*) FROM Favorites WHERE recipe_id = r.id) AS FavoriteCount
         FROM Recipes r
         JOIN Accounts a ON a.id = r.creator_id
         LEFT JOIN Ingredients i ON i.recipe_id = r.id
@@ -137,17 +138,18 @@ public class RecipesRepository : IRepository<Recipe>
   public Recipe Update(Recipe updateData)
   {
     string sql = @"
-      UPDATE Recipes
-      SET 
-        title = @Title,
-        instructions = @Instructions,
-        img = @Img,
-        category = @Category
-      WHERE id = @Id;
-      SELECT * FROM Recipes WHERE id = @Id;
+        UPDATE Recipes
+        SET 
+            title = @Title,
+            instructions = @Instructions,
+            img = COALESCE(@Img, img),
+            category = COALESCE(@Category, category) 
+        WHERE id = @Id;
     ";
 
-    return _db.QueryFirstOrDefault<Recipe>(sql, updateData);
+    _db.Execute(sql, updateData);
+
+    return GetById(updateData.Id);
   }
 
   IEnumerable<Recipe> IRepository<Recipe>.GetAll()
@@ -160,5 +162,11 @@ public class RecipesRepository : IRepository<Recipe>
     updateData.Id = id;
     return Update(updateData);
   }
+  
+  // public List<Ingredient> GetIngredientsByRecipeId(int id)
+  // {
+  //   updateData.Id = id;
+  //   return Update(updateData);
+  // }
 }
 

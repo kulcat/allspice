@@ -35,7 +35,7 @@ public class IngredientsRepository : IRepository<Ingredient>
 
   public bool Delete(int id)
   {
-    string sql = @"DELETE FROM Ingredients WHERE id = @id LIMIT 1";
+    string sql = @"DELETE FROM Ingredients WHERE id = @Id LIMIT 1";
     int rowsAffected = _db.Execute(sql, new { id });
     return rowsAffected > 0;
   }

@@ -14,7 +14,6 @@ public class FavoritesController : ControllerBase
     _auth0Provider = auth0Provider;
   }
 
-  [AllowAnonymous]
   [HttpGet]
   public ActionResult<IEnumerable<Favorite>> GetFavorites()
   {
@@ -44,11 +43,14 @@ public class FavoritesController : ControllerBase
   }
 
   [HttpPost]
-  public ActionResult<Favorite> CreateFavorite([FromBody] Favorite Favorite)
+  public async Task<ActionResult<Favorite>> CreateFavorite([FromBody] Favorite favorite)
   {
     try
     {
-      var newFavorite = _service.CreateFavorite(Favorite);
+      Account creator = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      favorite.Account_id = creator.Id;
+
+      var newFavorite = _service.CreateFavorite(favorite);
       return Ok(newFavorite);
     }
     catch (Exception e)
